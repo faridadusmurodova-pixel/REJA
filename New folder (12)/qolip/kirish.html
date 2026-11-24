@@ -1,0 +1,64 @@
+{% extends 'asos.html' %}
+
+{% block sarlavha %}Kirish - REJA Shaxsiy ish rejalashtirish{% endblock %}
+
+{% block kirish_mazmun %}
+<div class="kirish-ekrani">
+    <div class="kirish-karta">
+        <div class="kirish-boshi">
+            <div class="logotip-belgi" style="margin: 0 auto 12px; width: 48px; height: 48px; font-size: 24px;">R</div>
+            <h1>REJA</h1>
+            <p>Shaxsiy ish rejalashtirish tizimi</p>
+        </div>
+
+        {% if messages %}
+        <div class="xabarlar">
+            {% for message in messages %}
+            <div class="xabar xabar-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'kirish' %}" class="kirish-shakl">
+            {% csrf_token %}
+            <div class="shakl-guruh">
+                <label for="ism">Ismingiz *</label>
+                <input type="text" id="ism" name="ism" class="shakl-kiritish" placeholder="Masalan: Sardor" required>
+            </div>
+
+            <div class="shakl-guruh">
+                <label for="familiya">Familiyangiz</label>
+                <input type="text" id="familiya" name="familiya" class="shakl-kiritish" placeholder="Masalan: Qodirov">
+            </div>
+
+            <div class="shakl-guruh">
+                <label for="yosh">Yoshingiz *</label>
+                <input type="number" id="yosh" name="yosh" class="shakl-kiritish" placeholder="Masalan: 24" min="7" max="120" value="24" required>
+            </div>
+
+            <div class="shakl-guruh">
+                <label for="parol">Parol yoki maxfiy kod *</label>
+                <input type="password" id="parol" name="parol" class="shakl-kiritish" placeholder="Parolingizni kiriting" required>
+            </div>
+
+            <button type="submit" class="tugma-yashil" style="justify-content: center; padding: 12px; font-size: 15px; margin-top: 8px;">
+                🚀 Kirish / Yangi hisob yaratish
+            </button>
+        </form>
+
+        {% if mavjud_foydalanuvchilar %}
+        <div class="mavjud-foydalanuvchilar">
+            <p>👥 Avval kirgan foydalanuvchilar:</p>
+            <div class="mavjud-tugmalar">
+                {% for f in mavjud_foydalanuvchilar %}
+                <a href="{% url 'tezkor_kirish' f.id %}" class="mavjud-tugma">
+                    <span>👤 {{ f.toliq_ism }} ({{ f.yosh }} yosh)</span>
+                    <span style="color: var(--binafsha); font-size: 12px;">Kirish &rarr;</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

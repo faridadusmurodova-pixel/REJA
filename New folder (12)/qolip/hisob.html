@@ -1,0 +1,109 @@
+{% extends 'asos.html' %}
+
+{% block sarlavha %}Hisobot - REJA{% endblock %}
+
+{% block mazmun %}
+<div style="margin-bottom: 24px;">
+    <h2 style="font-size: 24px; font-weight: 700; color: #fff;">📊 Shaxsiy samaradorlik hisoboti</h2>
+    <p style="font-size: 13px; color: var(--matn-xira);">Foydalanuvchi: {{ user.toliq_ism }} &bull; Yoshingiz: {{ user.yosh }} da &bull; Kasb: {{ user.kasb }}</p>
+</div>
+
+<!-- 5 TA ASOSIY KO'RSATKICH -->
+<div class="statistika-paneli">
+    <div class="stat-karta">
+        <div class="stat-belgi jami">📋</div>
+        <div>
+            <div class="stat-raqam">{{ jami }}</div>
+            <div class="stat-nom">Jami rejalar</div>
+        </div>
+    </div>
+
+    <div class="stat-karta">
+        <div class="stat-belgi bajarildi">✅</div>
+        <div>
+            <div class="stat-raqam">{{ bajarilgan }}</div>
+            <div class="stat-nom">Bajarilgan rejalar</div>
+        </div>
+    </div>
+
+    <div class="stat-karta">
+        <div class="stat-belgi kutilmoqda">⏳</div>
+        <div>
+            <div class="stat-raqam">{{ bajarilmagan }}</div>
+            <div class="stat-nom">Bajarilmagan rejalar</div>
+        </div>
+    </div>
+
+    <div class="stat-karta">
+        <div class="stat-belgi bugun">⚡</div>
+        <div>
+            <div class="stat-raqam">{{ bugun_soni }}</div>
+            <div class="stat-nom">Bugungi rejalar</div>
+        </div>
+    </div>
+
+    <div class="stat-karta">
+        <div class="stat-belgi foiz">🎯</div>
+        <div style="flex-grow: 1;">
+            <div class="stat-raqam">{{ foiz }}%</div>
+            <div class="stat-nom">Bajarilish foizi</div>
+            <div class="progress-chiziq">
+                <div class="progress-toldirish" style="width: {{ foiz }}%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TAFSILOTLI TAHLIL -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 28px;">
+    <!-- Muhimlik darajasi -->
+    <div style="background-color: #ffffff; border: 1px solid var(--chegara); border-radius: 12px; padding: 24px; box-shadow: var(--soya);">
+        <h3 style="font-size: 16px; font-weight: 700; color: var(--matn-asosiy); margin-bottom: 16px;">🔥 Muhimlik darajasi bo'yicha</h3>
+        
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                    <span style="color: var(--qizil); font-weight: 600;">Yuqori muhimlikdagi:</span>
+                    <span style="font-weight: bold;">{{ yuqori_soni }} ta</span>
+                </div>
+                <div class="progress-chiziq">
+                    <div style="height: 100%; background-color: var(--qizil); width: {% if jami %}{% widthratio yuqori_soni jami 100 %}{% else %}0{% endif %}%;"></div>
+                </div>
+            </div>
+
+            <div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                    <span style="color: var(--sariq); font-weight: 600;">O'rta muhimlikdagi:</span>
+                    <span style="font-weight: bold;">{{ orta_soni }} ta</span>
+                </div>
+                <div class="progress-chiziq">
+                    <div style="height: 100%; background-color: var(--sariq); width: {% if jami %}{% widthratio orta_soni jami 100 %}{% else %}0{% endif %}%;"></div>
+                </div>
+            </div>
+
+            <div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                    <span style="color: var(--yashil); font-weight: 600;">Past muhimlikdagi:</span>
+                    <span style="font-weight: bold;">{{ past_soni }} ta</span>
+                </div>
+                <div class="progress-chiziq">
+                    <div style="height: 100%; background-color: var(--yashil); width: {% if jami %}{% widthratio past_soni jami 100 %}{% else %}0{% endif %}%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Soft Skills va mahsuldorlik tavsiyalari -->
+    <div style="background-color: #ffffff; border: 1px solid var(--chegara); border-radius: 12px; padding: 24px; box-shadow: var(--soya);">
+        <h3 style="font-size: 16px; font-weight: 700; color: var(--yashil); margin-bottom: 16px;">💡 Soft Skills va unumdorlik maslahatlari</h3>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            {% for m in maslahatlar %}
+            <div style="padding: 12px; background-color: var(--fon-panel); border: 1px solid var(--chegara); border-radius: 8px; border-left: 3px solid var(--binafsha);">
+                <div style="font-size: 13px; font-weight: 700; color: var(--matn-asosiy);">{{ m.sarlavha }}</div>
+                <div style="font-size: 12px; color: var(--matn-xira); margin-top: 4px; line-height: 1.4;">{{ m.matn }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

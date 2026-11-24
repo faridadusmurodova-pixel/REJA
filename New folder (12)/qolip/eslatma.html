@@ -1,0 +1,58 @@
+{% extends 'asos.html' %}
+
+{% block sarlavha %}Eslatmalar - REJA{% endblock %}
+
+{% block mazmun %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap;">
+    <div>
+        <h2 style="font-size: 24px; font-weight: 800; color: var(--matn-asosiy);">💡 Shaxsiy eslatmalar doskasi</h2>
+        <p style="font-size: 13px; color: var(--matn-xira);">Fikrlaringiz, muhim qaydlar va eslatmalar ro'yxati</p>
+    </div>
+</div>
+
+<!-- YANGI ESLATMA QO'SHISH FORMASI -->
+<div class="tezkor-qoshish" style="margin-bottom: 28px;">
+    <h3 style="font-size: 16px; margin-bottom: 12px; color: var(--matn-asosiy); font-weight: 700;">📝 Yangi eslatma yozish</h3>
+    <form method="post" action="{% url 'eslatma_qosh' %}" style="display: flex; flex-direction: column; gap: 12px;">
+        {% csrf_token %}
+        <div style="display: grid; grid-template-columns: 3fr 1fr auto; gap: 12px; align-items: center;">
+            <input type="text" name="sarlavha" class="shakl-kiritish" placeholder="Eslatma sarlavhasi..." required>
+            
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--matn-xira); cursor: pointer;">
+                <input type="checkbox" name="muhim"> <span>⭐ Muhim eslatma</span>
+            </label>
+
+            <button type="submit" class="tugma-binafsha">
+                <span>Saqlash</span>
+            </button>
+        </div>
+        <textarea name="matn" class="shakl-kiritish" rows="2" placeholder="Eslatma matnini yozing..." required></textarea>
+    </form>
+</div>
+
+<!-- ESLATMALAR PANORAMASI -->
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;">
+    {% if eslatmalar %}
+        {% for e in eslatmalar %}
+        <div style="background-color: var(--fon-karta); border: 1px solid {% if e.muhim %}var(--sariq){% else %}var(--chegara){% endif %}; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; position: relative;">
+            {% if e.muhim %}
+            <span style="position: absolute; top: 16px; right: 16px; font-size: 16px;" title="Muhim eslatma">⭐</span>
+            {% endif %}
+            <div>
+                <h4 style="font-size: 16px; font-weight: 700; color: var(--matn-asosiy); margin-bottom: 8px; padding-right: 24px;">{{ e.sarlavha }}</h4>
+                <p style="font-size: 13px; color: var(--matn-xira); line-height: 1.5; white-space: pre-wrap;">{{ e.matn }}</p>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--chegara); padding-top: 12px; font-size: 11px; color: var(--matn-xira);">
+                <span>🕒 {{ e.yaratildi|date:"d-M, H:i" }}</span>
+                <a href="{% url 'eslatma_ochir' e.id %}" class="tugma-qizil" style="padding: 4px 8px;" onclick="return confirm('Eslatmani o\'chirmoqchimisiz?');">🗑️ O'chirish</a>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div style="grid-column: 1 / -1; background-color: var(--fon-karta); border: 1px dashed var(--chegara); border-radius: 12px; padding: 40px; text-align: center; color: var(--matn-xira);">
+            Hozircha birorta ham eslatma yozilmagan. Yuqoridagi formadan foydalanib birinchi eslatmangizni qoldiring!
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

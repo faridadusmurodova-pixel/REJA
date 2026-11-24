@@ -1,0 +1,53 @@
+{% extends 'asos.html' %}
+
+{% block sarlavha %}Bugungi rejalar - REJA{% endblock %}
+
+{% block mazmun %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap;">
+    <div>
+        <h2 style="font-size: 24px; font-weight: 800; color: var(--matn-asosiy);">⚡ Bugungi rejalar</h2>
+        <p style="font-size: 13px; color: var(--yashil); font-weight: 600;">Sana: {{ bugungi_sana|date:"d-F, Y" }} &bull; Jami: {{ vazifalar.count }} ta reja</p>
+    </div>
+    <a href="{% url 'bosh' %}" class="tugma-yashil">➕ Yangi reja qo'shish</a>
+</div>
+
+<div class="vazifalar-guruhi">
+    {% if vazifalar %}
+        {% for v in vazifalar %}
+        <div class="vazifa-karta {% if v.bajarildi %}bajarilgan-karta{% endif %}">
+            <div class="vazifa-chap">
+                <a href="{% url 'bajar' v.id %}" class="belgi-tugma {% if v.bajarildi %}bajarildi{% endif %}" title="Bajarildi deb belgilash">
+                    ✓
+                </a>
+                <div class="vazifa-matn">
+                    <div class="vazifa-nom">{{ v.sarlavha }}</div>
+                    {% if v.tavsif %}<div class="vazifa-tavsif">{{ v.tavsif }}</div>{% endif %}
+                    <div class="vazifa-meta">
+                        {% if v.toifa %}
+                        <span class="toifa-nishon" style="background-color: {{ v.toifa.rang }}22; color: {{ v.toifa.rang }};">
+                            {{ v.toifa.belgi }} {{ v.toifa.nomi }}
+                        </span>
+                        {% endif %}
+                        <span class="muhimlik-nishon muhimlik-{{ v.muhimlik }}">
+                            {{ v.get_muhimlik_display }}
+                        </span>
+                        {% if v.vaqt %}
+                        <span>⏰ {{ v.vaqt|time:"H:i" }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="vazifa-amallar">
+                <a href="{% url 'saqla' v.id %}" class="tugma-xira" title="Tahrirlash">✏️</a>
+                <a href="{% url 'ochir' v.id %}" class="tugma-qizil" title="O'chirish" onclick="return confirm('Rostdan ham o\'chirmoqchimisiz?');">🗑️</a>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div style="background-color: var(--fon-karta); border: 1px dashed var(--chegara); border-radius: 12px; padding: 40px; text-align: center; color: var(--matn-xira);">
+            Bugungi kunda barcha rejalar bajarilgan yoki hali yangi reja qo'shilmagan!
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block sarlavha %}REJA - Shaxsiy ish rejalashtirish sayti{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/asos.css' %}">
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <div class="tizim-qobiq">
+        <!-- YON MENYU (SIDEBAR) -->
+        <aside class="yon-menyu">
+            <a href="{% url 'bosh' %}" class="logotip">
+                <div class="logotip-belgi">R</div>
+                <div class="logotip-matn">
+                    <h1>REJA</h1>
+                    <span>Ish boshqaruvi</span>
+                </div>
+            </a>
+
+            <ul class="menyu-royxat">
+                <li>
+                    <a href="{% url 'bosh' %}" class="menyu-havola {% if sahifa == 'bosh' %}faol{% endif %}">
+                        <span class="menyu-belgi">🏠</span>
+                        <span>Bosh sahifa</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'rejalar' %}" class="menyu-havola {% if sahifa == 'rejalar' %}faol{% endif %}">
+                        <span class="menyu-belgi">📋</span>
+                        <span>Mening rejalarim</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'bugun' %}" class="menyu-havola {% if sahifa == 'bugun' %}faol{% endif %}">
+                        <span class="menyu-belgi">⚡</span>
+                        <span>Bugungi rejalar</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'bajarilganlar' %}" class="menyu-havola {% if sahifa == 'bajarilganlar' %}faol{% endif %}">
+                        <span class="menyu-belgi">✅</span>
+                        <span>Bajarilganlar</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'eslatmalar' %}" class="menyu-havola {% if sahifa == 'eslatmalar' %}faol{% endif %}">
+                        <span class="menyu-belgi">💡</span>
+                        <span>Eslatmalar</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'hisobot' %}" class="menyu-havola {% if sahifa == 'hisobot' %}faol{% endif %}">
+                        <span class="menyu-belgi">📊</span>
+                        <span>Hisobot</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'profil' %}" class="menyu-havola {% if sahifa == 'profil' %}faol{% endif %}">
+                        <span class="menyu-belgi">👤</span>
+                        <span>Profil</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'blog' %}" class="menyu-havola {% if sahifa == 'blog' %}faol{% endif %}">
+                        <span class="menyu-belgi">📖</span>
+                        <span>Foydali blog</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="menyu-past">
+                <a href="{% url 'chiqish' %}" class="menyu-havola" style="color: var(--qizil);">
+                    <span class="menyu-belgi">🚪</span>
+                    <span>Chiqish</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- ASOSIY QISM -->
+        <main class="asosiy-qism">
+            <header class="yuqori-qator">
+                <div class="salomlashuv">
+                    <h2>Xush kelibsiz, {{ user.first_name|default:user.username }}!</h2>
+                    <p>{{ user.kasb|default:"Foydalanuvchi" }} &bull; {{ user.yosh }} yosh &bull; Faqat shaxsiy rejalaringiz ko'rsatiladi</p>
+                </div>
+                <div class="foydalanuvchi-blok">
+                    <a href="{% url 'profil' %}" class="profil-tugma">
+                        <div class="profil-avatar">{{ user.first_name|first|default:"U"|upper }}</div>
+                        <span>{{ user.first_name }} {{ user.last_name }}</span>
+                    </a>
+                </div>
+            </header>
+
+            <div class="ichki-maydon">
+                {% if messages %}
+                <div class="xabarlar">
+                    {% for message in messages %}
+                    <div class="xabar xabar-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% block mazmun %}{% endblock %}
+            </div>
+        </main>
+    </div>
+    {% else %}
+        {% block kirish_mazmun %}{% endblock %}
+    {% endif %}
+
+    <script src="{% static 'js/asos.js' %}"></script>
+</body>
+</html>

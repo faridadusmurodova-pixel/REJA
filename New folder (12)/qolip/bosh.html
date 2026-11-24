@@ -1,0 +1,135 @@
+{% extends 'asos.html' %}
+
+{% block sarlavha %}Bosh sahifa - REJA{% endblock %}
+
+{% block mazmun %}
+<!-- STATISTIKA BLOKI -->
+<div class="statistika-paneli">
+    <div class="stat-karta">
+        <div class="stat-belgi jami">📋</div>
+        <div>
+            <div class="stat-raqam">{{ hisobot.jami }}</div>
+            <div class="stat-nom">Jami rejalar</div>
+        </div>
+    </div>
+
+    <div class="stat-karta">
+        <div class="stat-belgi bajarildi">✅</div>
+        <div>
+            <div class="stat-raqam">{{ hisobot.bajarildi }}</div>
+            <div class="stat-nom">Bajarilganlar</div>
+        </div>
+    </div>
+
+    <div class="stat-karta">
+        <div class="stat-belgi kutilmoqda">⏳</div>
+        <div>
+            <div class="stat-raqam">{{ hisobot.kutilmoqda }}</div>
+            <div class="stat-nom">Kutilmoqda</div>
+        </div>
+    </div>
+
+    <div class="stat-karta">
+        <div class="stat-belgi bugun">⚡</div>
+        <div>
+            <div class="stat-raqam">{{ bugungi_rejalar.count }}</div>
+            <div class="stat-nom">Bugungi rejalar</div>
+        </div>
+    </div>
+
+    <div class="stat-karta">
+        <div class="stat-belgi foiz">🎯</div>
+        <div style="flex-grow: 1;">
+            <div class="stat-raqam">{{ hisobot.foiz }}%</div>
+            <div class="stat-nom">Bajarilish darajasi</div>
+            <div class="progress-chiziq">
+                <div class="progress-toldirish" style="width: {{ hisobot.foiz }}%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TEZKOR REJA QO'SHISH -->
+<div class="tezkor-qoshish">
+    <h3 style="font-size: 16px; margin-bottom: 12px; color: var(--matn-asosiy); font-weight: 700;">➕ Yangi reja qo'shish</h3>
+    <form method="post" action="{% url 'qosh' %}">
+        {% csrf_token %}
+        <input type="text" name="sarlavha" class="shakl-kiritish" placeholder="Reja yoki vazifa nomini yozing..." required>
+        
+        <select name="toifa" class="shakl-tanlash">
+            <option value="">Toifasiz</option>
+            {% for t in toifalar %}
+            <option value="{{ t.id }}">{{ t.belgi }} {{ t.nomi }}</option>
+            {% endfor %}
+        </select>
+
+        <input type="date" name="sana" class="shakl-kiritish" value="{{ hozirgi_sana|date:'Y-m-d' }}">
+        <input type="time" name="vaqt" class="shakl-kiritish">
+
+        <select name="muhimlik" class="shakl-tanlash">
+            <option value="orta">O'rta muhimlik</option>
+            <option value="yuqori">Yuqori muhimlik</option>
+            <option value="past">Past muhimlik</option>
+        </select>
+
+        <button type="submit" class="tugma-yashil">
+            <span>Qo'shish</span>
+        </button>
+    </form>
+</div>
+
+<!-- BUGUNGI KUN TARTIBI -->
+<div style="margin-bottom: 32px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="font-size: 18px; font-weight: 800; color: var(--matn-asosiy);">⚡ Bugungi kun tartibi ({{ hozirgi_sana|date:"d-F, Y" }})</h3>
+        <a href="{% url 'bugun' %}" class="tugma-xira">Barchasi &rarr;</a>
+    </div>
+
+    <div class="vazifalar-guruhi">
+        {% if bugungi_rejalar %}
+            {% for v in bugungi_rejalar %}
+            <div class="vazifa-karta {% if v.bajarildi %}bajarilgan-karta{% endif %}">
+                <div class="vazifa-chap">
+                    <a href="{% url 'bajar' v.id %}" class="belgi-tugma {% if v.bajarildi %}bajarildi{% endif %}" title="Holatni o'zgartirish">
+                        ✓
+                    </a>
+                    <div class="vazifa-matn">
+                        <div class="vazifa-nom">{{ v.sarlavha }}</div>
+                        {% if v.tavsif %}<div class="vazifa-tavsif">{{ v.tavsif }}</div>{% endif %}
+                        <div class="vazifa-meta">
+                            {% if v.toifa %}
+                            <span class="toifa-nishon" style="background-color: {{ v.toifa.rang }}22; color: {{ v.toifa.rang }};">
+                                {{ v.toifa.belgi }} {{ v.toifa.nomi }}
+                            </span>
+                            {% endif %}
+                            <span class="muhimlik-nishon muhimlik-{{ v.muhimlik }}">
+                                {{ v.get_muhimlik_display }}
+                            </span>
+                            {% if v.vaqt %}
+                            <span>⏰ {{ v.vaqt|time:"H:i" }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="vazifa-amallar">
+                    <a href="{% url 'nusxa' v.id %}" class="tugma-xira" title="Nusxalash (Copy/Deepcopy)">📄 Nusxa</a>
+                    <a href="{% url 'saqla' v.id %}" class="tugma-xira" title="Tahrirlash">✏️</a>
+                    <a href="{% url 'ochir' v.id %}" class="tugma-qizil" title="O'chirish" onclick="return confirm('Rostdan ham o\'chirmoqchimisiz?');">🗑️</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div style="background-color: var(--fon-karta); border: 1px dashed var(--chegara); border-radius: 12px; padding: 24px; text-align: center; color: var(--matn-xira);">
+                Bugun uchun rejalashtirilgan vazifalar yo'q. Yuqoridagi formadan yangi reja qo'shishingiz mumkin!
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- SOFT SKILLS MASLAHATI -->
+<div style="background-color: #f8fafc; border: 1px solid var(--chegara); border-left: 4px solid var(--yashil); border-radius: 12px; padding: 20px; box-shadow: var(--soya);">
+    <h4 style="color: var(--yashil); margin-bottom: 6px; font-size: 14px; font-weight: 700;">💡 Soft Skills maslahati: {{ maslahat.sarlavha }}</h4>
+    <p style="font-size: 13px; color: var(--matn-asosiy); line-height: 1.5;">{{ maslahat.matn }}</p>
+</div>
+{% endblock %}

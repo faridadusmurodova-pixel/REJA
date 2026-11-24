@@ -1,0 +1,84 @@
+{% extends 'asos.html' %}
+
+{% block sarlavha %}Shaxsiy Profil - REJA{% endblock %}
+
+{% block mazmun %}
+<div style="margin-bottom: 24px;">
+    <h2 style="font-size: 24px; font-weight: 800; color: var(--matn-asosiy);">👤 Foydalanuvchi profili</h2>
+    <p style="font-size: 13px; color: var(--matn-xira);">Shaxsiy ma'lumotlaringizni tahrirlash va hisob holati</p>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; flex-wrap: wrap;">
+    <!-- MA'LUMOTLARNI TAHRIRLASH -->
+    <div style="background-color: #ffffff; border: 1px solid var(--chegara); border-radius: 12px; padding: 24px; box-shadow: var(--soya);">
+        <h3 style="font-size: 16px; font-weight: 700; color: var(--matn-asosiy); margin-bottom: 16px;">✏️ Ma'lumotlarni o'zgartirish</h3>
+        
+        <form method="post" action="{% url 'profil' %}" style="display: flex; flex-direction: column; gap: 14px;">
+            {% csrf_token %}
+            {% for maydon in forma %}
+            <div class="shakl-guruh">
+                <label for="{{ maydon.id_for_label }}">{{ maydon.label }}</label>
+                {{ maydon }}
+                {% if maydon.errors %}
+                <span style="color: var(--qizil); font-size: 12px;">{{ maydon.errors.0 }}</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="tugma-yashil" style="margin-top: 8px;">
+                💾 Saqlash
+            </button>
+        </form>
+    </div>
+
+    <!-- HISOB MA'LUMOTLARI VA ALMASHTIRISH -->
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div style="background-color: #ffffff; border: 1px solid var(--chegara); border-radius: 12px; padding: 24px; box-shadow: var(--soya);">
+            <h3 style="font-size: 16px; font-weight: 700; color: var(--matn-asosiy); margin-bottom: 16px;">ℹ️ Shaxsiy hisobingiz</h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px;">
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--chegara); padding-bottom: 8px;">
+                    <span style="color: var(--matn-xira);">Ism va familiya:</span>
+                    <strong>{{ user.toliq_ism }}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--chegara); padding-bottom: 8px;">
+                    <span style="color: var(--matn-xira);">Yoshingiz:</span>
+                    <strong>{{ user.yosh }} yoshda</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--chegara); padding-bottom: 8px;">
+                    <span style="color: var(--matn-xira);">Kasb / Yo'nalish:</span>
+                    <strong>{{ user.kasb }}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--chegara); padding-bottom: 8px;">
+                    <span style="color: var(--matn-xira);">Telegram ID:</span>
+                    <strong>{{ user.telegram_id|default:"Belgilanmagan" }}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--matn-xira);">Ro'yxatdan o'tgan sana:</span>
+                    <strong>{{ user.date_joined|date:"d-M, Y" }}</strong>
+                </div>
+            </div>
+        </div>
+
+        {% if boshqa_foydalanuvchilar %}
+        <div style="background-color: #ffffff; border: 1px solid var(--chegara); border-radius: 12px; padding: 20px; box-shadow: var(--soya);">
+            <h4 style="font-size: 14px; font-weight: 700; color: var(--binafsha); margin-bottom: 12px;">🔄 Boshqa hisobga o'tish</h4>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                {% for b in boshqa_foydalanuvchilar %}
+                <a href="{% url 'tezkor_kirish' b.id %}" class="mavjud-tugma">
+                    <span>👤 {{ b.toliq_ism }} ({{ b.yosh }} yosh)</span>
+                    <span style="color: var(--binafsha); font-size: 12px;">O'tish &rarr;</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div>
+            <a href="{% url 'chiqish' %}" class="tugma-qizil" style="padding: 10px 18px; font-size: 13px; display: inline-flex;">
+                🚪 Tizimdan chiqish (Yangi foydalanuvchi bo'lib kirish)
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

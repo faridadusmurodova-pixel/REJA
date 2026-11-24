@@ -1,0 +1,82 @@
+{% extends 'asos.html' %}
+
+{% block sarlavha %}Mening rejalarim - REJA{% endblock %}
+
+{% block mazmun %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+    <div>
+        <h2 style="font-size: 24px; font-weight: 800; color: var(--matn-asosiy);">📋 Mening barcha rejalarim</h2>
+        <p style="font-size: 13px; color: var(--matn-xira);">Faqat sizga tegishli shaxsiy vazifalar ro'yxati (Jami: {{ vazifalar.count }})</p>
+    </div>
+    
+    <div style="display: flex; gap: 10px; align-items: center;">
+        <input type="text" id="jonli-qidiruv" class="shakl-kiritish" style="width: 220px;" placeholder="Tezkor qidirish...">
+    </div>
+</div>
+
+<!-- FILTRLAR -->
+<div style="background-color: var(--fon-panel); border: 1px solid var(--chegara); border-radius: 12px; padding: 16px; margin-bottom: 24px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+    <div style="display: flex; gap: 8px;">
+        <a href="{% url 'rejalar' %}" class="tugma-xira {% if not tanlangan_holat %}faol{% endif %}">Hammasi</a>
+        <a href="{% url 'rejalar' %}?holat=kutilmoqda" class="tugma-xira {% if tanlangan_holat == 'kutilmoqda' %}faol{% endif %}">⏳ Kutilmoqda</a>
+        <a href="{% url 'rejalar' %}?holat=bajarildi" class="tugma-xira {% if tanlangan_holat == 'bajarildi' %}faol{% endif %}">✅ Bajarildi</a>
+    </div>
+
+    <form method="get" action="{% url 'rejalar' %}" style="display: flex; gap: 8px; margin-left: auto;">
+        <select name="toifa" class="shakl-tanlash" onchange="this.form.submit()" style="width: auto;">
+            <option value="">Barcha toifalar</option>
+            {% for t in toifalar %}
+            <option value="{{ t.id }}" {% if tanlangan_toifa == t.id|stringformat:"s" %}selected{% endif %}>
+                {{ t.belgi }} {{ t.nomi }}
+            </option>
+            {% endfor %}
+        </select>
+        {% if tanlangan_holat %}
+        <input type="hidden" name="holat" value="{{ tanlangan_holat }}">
+        {% endif %}
+    </form>
+</div>
+
+<!-- REJALAR RO'YXATI -->
+<div class="vazifalar-guruhi">
+    {% if vazifalar %}
+        {% for v in vazifalar %}
+        <div class="vazifa-karta {% if v.bajarildi %}bajarilgan-karta{% endif %}">
+            <div class="vazifa-chap">
+                <a href="{% url 'bajar' v.id %}" class="belgi-tugma {% if v.bajarildi %}bajarildi{% endif %}" title="Bajarilgan deb belgilash">
+                    ✓
+                </a>
+                <div class="vazifa-matn">
+                    <div class="vazifa-nom">{{ v.sarlavha }}</div>
+                    {% if v.tavsif %}<div class="vazifa-tavsif">{{ v.tavsif }}</div>{% endif %}
+                    <div class="vazifa-meta">
+                        {% if v.toifa %}
+                        <span class="toifa-nishon" style="background-color: {{ v.toifa.rang }}22; color: {{ v.toifa.rang }};">
+                            {{ v.toifa.belgi }} {{ v.toifa.nomi }}
+                        </span>
+                        {% endif %}
+                        <span class="muhimlik-nishon muhimlik-{{ v.muhimlik }}">
+                            {{ v.get_muhimlik_display }}
+                        </span>
+                        <span>📅 {{ v.sana|date:"d-M, Y" }}</span>
+                        {% if v.vaqt %}
+                        <span>⏰ {{ v.vaqt|time:"H:i" }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="vazifa-amallar">
+                <a href="{% url 'nusxa' v.id %}" class="tugma-xira" title="Nusxalash (Copy/Deepcopy)">📄 Nusxa</a>
+                <a href="{% url 'saqla' v.id %}" class="tugma-xira" title="Tahrirlash">✏️</a>
+                <a href="{% url 'ochir' v.id %}" class="tugma-qizil" title="O'chirish" onclick="return confirm('Rostdan ham o\'chirmoqchimisiz?');">🗑️</a>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div style="background-color: var(--fon-karta); border: 1px dashed var(--chegara); border-radius: 12px; padding: 40px; text-align: center; color: var(--matn-xira);">
+            Hozircha hech qanday reja topilmadi. Bosh sahifaga o'tib yangi reja qo'shishingiz mumkin.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

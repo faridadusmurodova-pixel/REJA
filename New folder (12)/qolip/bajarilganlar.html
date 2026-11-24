@@ -1,0 +1,58 @@
+{% extends 'asos.html' %}
+
+{% block sarlavha %}Bajarilganlar - REJA{% endblock %}
+
+{% block mazmun %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap;">
+    <div>
+        <h2 style="font-size: 24px; font-weight: 800; color: var(--matn-asosiy);">✅ Bajarilgan rejalar arxivi</h2>
+        <p style="font-size: 13px; color: var(--yashil); font-weight: 600;">Muvaffaqiyatli yakunlangan rejalar soni: {{ vazifalar.count }} ta</p>
+    </div>
+</div>
+
+{% if bajarilgan_nomlar %}
+<div style="background-color: var(--fon-panel); border: 1px solid var(--chegara); border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+    <div style="font-size: 13px; color: var(--matn-xira); margin-bottom: 8px;">Ixcham ro'yxat (List Comprehension mavzusi):</div>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        {% for nom in bajarilgan_nomlar %}
+        <span style="background-color: var(--yashil-ochiq); color: var(--yashil); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 500;">
+            ✓ {{ nom }}
+        </span>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="vazifalar-guruhi">
+    {% if vazifalar %}
+        {% for v in vazifalar %}
+        <div class="vazifa-karta bajarilgan-karta">
+            <div class="vazifa-chap">
+                <a href="{% url 'bajar' v.id %}" class="belgi-tugma bajarildi" title="Kutilmoqda holatiga qaytarish">
+                    ✓
+                </a>
+                <div class="vazifa-matn">
+                    <div class="vazifa-nom">{{ v.sarlavha }}</div>
+                    {% if v.tavsif %}<div class="vazifa-tavsif">{{ v.tavsif }}</div>{% endif %}
+                    <div class="vazifa-meta">
+                        {% if v.toifa %}
+                        <span class="toifa-nishon">{{ v.toifa.belgi }} {{ v.toifa.nomi }}</span>
+                        {% endif %}
+                        <span>📅 {{ v.sana|date:"d-M, Y" }} da bajarildi</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="vazifa-amallar">
+                <a href="{% url 'bajar' v.id %}" class="tugma-xira" title="Qayta faollashtirish">↩️ Qaytarish</a>
+                <a href="{% url 'ochir' v.id %}" class="tugma-qizil" title="O'chirish" onclick="return confirm('Rostdan ham o\'chirmoqchimisiz?');">🗑️</a>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div style="background-color: var(--fon-karta); border: 1px dashed var(--chegara); border-radius: 12px; padding: 40px; text-align: center; color: var(--matn-xira);">
+            Hozircha bajarilgan rejalar mavjud emas. Vazifalarni bajarganingizdan so'ng chap tarafdagi doirachani bosing!
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,1 @@
+# REJA loyihasi konfiguratsiya paketi

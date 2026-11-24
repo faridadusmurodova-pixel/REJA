@@ -1,0 +1,35 @@
+# 39. DOCKER-COMPOSE VA 19. POSTGRESQL
+version: '3.8'
+
+services:
+  baza:
+    image: postgres:15-alpine
+    container_name: reja_postgres
+    environment:
+      POSTGRES_DB: reja_baza
+      POSTGRES_USER: reja_user
+      POSTGRES_PASSWORD: reja_parol_2026
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  veb:
+    build: .
+    container_name: reja_veb
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/ilova
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_DB=reja_baza
+      - POSTGRES_USER=reja_user
+      - POSTGRES_PASSWORD=reja_parol_2026
+      - POSTGRES_HOST=baza
+      - POSTGRES_PORT=5432
+    depends_on:
+      - baza
+
+volumes:
+  postgres_data:
